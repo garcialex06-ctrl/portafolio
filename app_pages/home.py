@@ -51,6 +51,16 @@ with st.container(border=True):
 with st.container(border=True):
     st.subheader("Secciones del menú")
 
+    pages = st.session_state.get("_pages_by_title", {})
+
+    def _go(title: str) -> None:
+        target = pages.get(title)
+        if target is None:
+            st.error(f"No se encontró la sección «{title}».")
+            return
+        st.session_state.main_menu = title
+        st.switch_page(target)
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -60,11 +70,13 @@ with st.container(border=True):
             "e informa qué empresas se omitieron. El S&P 500 se usa como benchmark, "
             "no como activo optimizable."
         )
-        st.page_link(
-            "app_pages/data.py",
-            label="Ir a Carga de datos",
+        if st.button(
+            "Ir a Carga de datos",
+            key="home_go_data",
             icon=":material/database:",
-        )
+            width="content",
+        ):
+            _go("Carga y preparación de datos")
 
         st.markdown("#### Inputs y configuración inicial")
         st.markdown(
@@ -72,11 +84,13 @@ with st.container(border=True):
             "(por ejemplo, Visa = 15 %) y la **tasa libre de riesgo** "
             "(por defecto ~4 % anual). Confirma el escenario para continuar."
         )
-        st.page_link(
-            "app_pages/inputs.py",
-            label="Ir a Inputs",
+        if st.button(
+            "Ir a Inputs",
+            key="home_go_inputs",
             icon=":material/tune:",
-        )
+            width="content",
+        ):
+            _go("Inputs y configuración inicial")
 
     with col2:
         st.markdown("#### Optimización y frontera eficiente")
@@ -85,11 +99,13 @@ with st.container(border=True):
             "(pesos iguales vs optimizado) con rendimiento, volatilidad y Sharpe anualizados, "
             "y gráfico de la **frontera eficiente** con la **línea del mercado de capitales (CML)**."
         )
-        st.page_link(
-            "app_pages/optimize.py",
-            label="Ir a Optimización",
+        if st.button(
+            "Ir a Optimización",
+            key="home_go_optimize",
             icon=":material/show_chart:",
-        )
+            width="content",
+        ):
+            _go("Optimización y frontera eficiente")
 
         st.markdown("#### Resultados finales y validación histórica")
         st.markdown(
@@ -97,11 +113,13 @@ with st.container(border=True):
             "y gráfico de evolución histórica base **$100** para pesos iguales, "
             "portafolio optimizado y S&P 500."
         )
-        st.page_link(
-            "app_pages/results.py",
-            label="Ir a Resultados",
+        if st.button(
+            "Ir a Resultados",
+            key="home_go_results",
             icon=":material/fact_check:",
-        )
+            width="content",
+        ):
+            _go("Resultados finales y validación histórica")
 
 with st.container(border=True):
     st.markdown("### 📝 Decisiones de diseño")

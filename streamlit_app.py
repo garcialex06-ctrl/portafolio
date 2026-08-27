@@ -75,19 +75,19 @@ PAGES = [
 ]
 page_by_title = {p.title: p for p in PAGES}
 page_titles = list(page_by_title.keys())
+st.session_state["_pages_by_title"] = page_by_title
 
 page = st.navigation(PAGES, position="hidden")
 
 with st.sidebar:
     st.markdown("**Menú principal**")
-    st.session_state.setdefault("main_menu", page.title)
-    if st.session_state.main_menu not in page_titles:
-        st.session_state.main_menu = page.title
-
+    # Key ligada a la página activa: al navegar desde Inicio el selectbox
+    # se remonta y no fuerza el regreso a la sección anterior.
     selected_title = st.selectbox(
         "Sección",
         options=page_titles,
-        key="main_menu",
+        index=page_titles.index(page.title),
+        key=f"sidebar_section_{page.title}",
         label_visibility="collapsed",
     )
     if selected_title != page.title:
